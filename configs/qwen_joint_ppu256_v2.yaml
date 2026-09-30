@@ -1,0 +1,111 @@
+run_id: qwen_joint_libero40_ppu256_80k_20260918_v2
+run_root_dir: /mnt/home/jiahaozhe/project/qwen_dit4dit/results
+seed: 42
+framework:
+  name: DiT4DiTQwenJoint
+  qwenvl:
+    base_vlm: /mnt/home/jiahaozhe/project/qwen_dit4dit/models/Qwen3-VL-4B-Instruct
+    attn_implementation: sdpa
+    gradient_checkpointing: false
+  cosmos25:
+    base_model: /mnt/home/jiahaozhe/project/qwen_dit4dit/models/Cosmos-Predict2.5-2B
+    extract_layer: 17
+    conditional_frame_timestep: 0.0001
+    training: joint
+    flow_matching:
+      time_distribution: uniform
+      high_sigma_ratio: null
+      high_sigma_min: null
+    action_gradients: true
+  action_model:
+    action_model_type: DiT-B
+    hidden_size: 2560
+    add_pos_embed: true
+    max_seq_len: 1024
+    action_dim: 8
+    state_dim: 16
+    future_action_window_size: 7
+    action_horizon: 8
+    past_action_window_size: 0
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    diffusion_model_cfg:
+      cross_attention_dim: 2048
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      num_layers: 16
+      output_dim: 2560
+      positional_embeddings: null
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /mnt/home/jiahaozhe/project/qwen_dit4dit/datasets/libero
+    data_mix: libero_all
+    include_state: true
+    action_type: joint_position
+    default_image_resolution:
+    - 3
+    - 224
+    - 224
+    image_size:
+    - 224
+    - 224
+    video_delta_indices:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    action_video_freq_ratio: 2
+    max_state_dim: 16
+    max_action_dim: 8
+    load_all_data_for_training: true
+    delete_pause_frame: false
+    video_backend: torchvision_av
+    per_device_batch_size: 1
+    num_workers: 2
+cache:
+  root: /mnt/home/jiahaozhe/project/qwen_dit4dit/datasets/libero_concat_cache
+  batch_size: 8
+  shard_size: 256
+  current_images: /mnt/home/jiahaozhe/project/qwen_dit4dit/datasets/libero_current_images_v1
+trainer:
+  max_train_steps: 80000
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: false
+  repeated_diffusion_steps: 4
+  learning_rate:
+    cosmos: 1.0e-05
+    fusion: 0.0001
+    action_model: 0.0001
+    qwen: 1.0e-05
+  min_lr: 5.0e-07
+  warmup_fraction: 0.0625
+  max_grad_norm: 1.0
+  save_interval: 5000
+  logging_frequency: 10
+  optimizer:
+    betas:
+    - 0.9
+    - 0.95
+    eps: 1.0e-08
+    weight_decay: 1.0e-08
+  training_hours: 28
+  max_reserved_gib: 80
+  initial_checkpoint_step: 0
+  recovery_initial_step: 100
+  recovery_interval: 500
+evaluation:
+  minimum_trials: 10
+  target_trials: 50
+  budget_hours: 10
+  offline_samples_per_task: 100

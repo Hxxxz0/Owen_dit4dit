@@ -1,0 +1,59 @@
+# Local environments, caches, and editor state
+.venv*/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.vscode/
+.idea/
+*.swp
+.env
+.env.*
+
+# Downloaded models, datasets, and generated run state
+models/
+datasets/
+logs/
+dlc/
+results/
+
+# Large checkpoints and rollout artifacts
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.tar
+*.tar.gz
+*.zip
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.npy
+*.npz
+*.parquet
+*.msgpack
+*.deb
+*.STL
+*.stl
+*.obj
+*.msh
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Simulation and demo assets are downloaded/generated separately
+LIBERO/libero/libero/assets/
+LIBERO/images/
+DiT4DiT/media/
+
+# Package/build outputs
+*.egg-info/
+build/
+dist/
